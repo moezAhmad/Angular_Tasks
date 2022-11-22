@@ -9,6 +9,7 @@
           type="number"
           [(ngModel)]="detail.height"
           placeholder="Height in inches"
+          min="0"
         />
         <span class="icon"><img src="assets/height.svg" /></span>
       </div>
@@ -20,15 +21,20 @@
           type="number"
           [(ngModel)]="detail.weight"
           placeholder="Weight in Pounds"
+          min="0"
         />
         <span class="icon"><img src="assets/weight.svg" /></span>
       </div>
     </div>
     <button class="btn btn--primary" (click)="calculateBMI()">Calculate</button>
-    <h1 class="text" style="color: mediumslateblue">Results</h1>
+    <h1 *ngIf="detail.BMI > 0" class="text" style="color: mediumslateblue">
+      Results
+    </h1>
     <h2 *ngIf="detail.BMI > 0" style="text-align: center">
       Your BMI is {{ detail.BMI }}
     </h2>
-    <h2 class="message" style="text-align: center">{{ detail.message }}</h2>
+    <h2 class="message" style="text-align: center">
+      {{ detail.message }}
+    </h2>
   </div>
 </div>

@@ -8,10 +8,10 @@ import { Detail } from '../detail-type';
 })
 export class CalculatorCardComponent implements OnInit {
   detail: Detail = {
-    height: 61,
-    weight: 120,
-    BMI: 22.7,
-    message: 'You are normal weight.',
+    height: 0,
+    weight: 0,
+    BMI: -1,
+    message: '',
   };
   calculateBMI(): void {
     if (this.detail.height <= 0 || this.detail.weight <= 0) {

@@ -14,6 +14,7 @@
     position: absolute;
     pointer-events: none;
     background-color: #ebebeb;
+    opacity: .9;
     width: 25%;
     height: 100%;
     transition: background-color var(--duration) var(--ease), transform var(--duration) var(--ease);
@@ -46,6 +47,7 @@
 .form:focus-within:before,
 .form:focus-within:after {
     background-color: white;
+    opacity: 1;
     transform: skewY(0);
 }
 .title {
