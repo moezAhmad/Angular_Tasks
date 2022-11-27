@@ -1,0 +1,26 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato&family=Montserrat:wght@100;200;300;400;500;600;700&display=swap");
+
+$PRIMARY_COLOR: #6c5dd3;
+$SECONDARY_COLOR: #ffa2c0;
+$SUCCESS_COLOR: #46bcaa;
+$INFO_COLOR: #4d69fa;
+$WARNING_COLOR: #ffcf52;
+$DANGER_COLOR: #f35421;
+$LIGHT_COLOR: #e7eef8;
+$DARK_COLOR: #1f2128;
+
+$FONT_FAMILY: "Montserrat", "Lato", sans-serif;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html {
+  font-size: 62.5%;
+}
+body {
+  font-family: $FONT_FAMILY;
+  font-size: 1.2rem;
+  background-color: $LIGHT_COLOR;
+}
