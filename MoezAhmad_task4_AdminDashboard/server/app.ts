@@ -1,9 +1,11 @@
 import express from "express";
-import { Student, List, Task } from "./db/types";
+import { Student, List, Task, Admin } from "./db/types";
 import bodyParser from "body-parser";
-import { mongoose } from "./db/mongoose";
+import { mongoose } from "./db/config/mongoose";
+import http from "http";
 
 const app = express();
+mongoose;
 
 // Load middleware
 app.use(bodyParser.json());
@@ -157,7 +159,155 @@ app.delete("/lists/:listId/tasks/:taskId", (req, res) => {
     });
 });
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
-  mongoose;
+/* Auth Routes*/
+
+/*
+ * POST /students
+ * Purpose: Sign up students
+ */
+app.post("/students", async (req, res) => {
+  // our register logic goes here...
+  let { name, email, password } = req.body;
+  console.log({ name, email, password });
+  let newStudent = new Student({
+    name,
+    email,
+    password,
+  });
+  newStudent
+    .save()
+    .then((studentDoc: any) => {
+      return newStudent.createSession();
+    })
+    .then((refreshToken: any) => {
+      // Session created successfully - refreshToken returned
+      // now we generate an access auth token for the student
+      return newStudent.generateAccessAuthToken().then((accessToken: any) => {
+        // access auth token generated successfully, now we return an object containing the auth tokens
+        return { accessToken, refreshToken };
+      });
+    })
+    .then((authTokens: any) => {
+      // Now construct and send the response to the student with their auth tokens in the header and the student object in the body
+      res
+        .header("x-refresh-token", authTokens.refreshToken)
+        .header("x-access-token", authTokens.accessToken)
+        .send(newStudent);
+    })
+    .catch((e: any) => {
+      console.log(e);
+      return res.sendStatus(400);
+    });
+});
+
+/*
+ * POST /students/login
+ * Purpose: Sign in students
+ */
+app.get("/students/login", (req, res) => {
+  // our login logic goes here
+  let { email, password } = req.body;
+  // @ts-ignore
+  Student.findByCredentials(email, password).then((student: any) => {
+    return student
+      .createSession()
+      .then((refreshToken: any) => {
+        // Session created successfully - refreshToken returned
+        // now we generate an access auth token for the student
+        return student.generateAccessAuthToken().then((accessToken: any) => {
+          // access auth token generated successfully, now we return an object containing the auth tokens
+          return { accessToken, refreshToken };
+        });
+      })
+      .then((authTokens: any) => {
+        // Now construct and send the response to the student with their auth tokens in the header and the student object in the body
+        res
+          .header("x-refresh-token", authTokens.refreshToken)
+          .header("x-access-token", authTokens.accessToken)
+          .send(student);
+      })
+      .catch((e: any) => {
+        console.log(e);
+        return res.sendStatus(400);
+      });
+  });
+});
+
+/*
+ * POST /admins
+ * Purpose: Sign up admins
+ */
+app.post("/admins", async (req, res) => {
+  // our register logic goes here...
+  let { name, email, password } = req.body;
+  console.log({ name, email, password });
+  let newAdmin = new Admin({
+    name,
+    email,
+    password,
+  });
+  newAdmin
+    .save()
+    .then((adminDoc: any) => {
+      return newAdmin.createSession();
+    })
+    .then((refreshToken: any) => {
+      // Session created successfully - refreshToken returned
+      // now we generate an access auth token for the student
+      return newAdmin.generateAccessAuthToken().then((accessToken: any) => {
+        // access auth token generated successfully, now we return an object containing the auth tokens
+        return { accessToken, refreshToken };
+      });
+    })
+    .then((authTokens: any) => {
+      // Now construct and send the response to the student with their auth tokens in the header and the student object in the body
+      res
+        .header("x-refresh-token", authTokens.refreshToken)
+        .header("x-access-token", authTokens.accessToken)
+        .send(newAdmin);
+    })
+    .catch((e: any) => {
+      console.log(e);
+      return res.sendStatus(400);
+    });
+});
+
+/*
+ * POST /admins/login
+ * Purpose: Sign in admins
+ */
+app.get("/admins/login", (req, res) => {
+  // our login logic goes here
+  let { email, password } = req.body;
+  // @ts-ignore
+  Admin.findByCredentials(email, password).then((admin: any) => {
+    return admin
+      .createSession()
+      .then((refreshToken: any) => {
+        // Session created successfully - refreshToken returned
+        // now we generate an access auth token for the admin
+        return admin.generateAccessAuthToken().then((accessToken: any) => {
+          // access auth token generated successfully, now we return an object containing the auth tokens
+          return { accessToken, refreshToken };
+        });
+      })
+      .then((authTokens: any) => {
+        // Now construct and send the response to the admin with their auth tokens in the header and the admin object in the body
+        res
+          .header("x-refresh-token", authTokens.refreshToken)
+          .header("x-access-token", authTokens.accessToken)
+          .send(admin);
+      })
+      .catch((e: any) => {
+        console.log(e);
+        return res.sendStatus(400);
+      });
+  });
+});
+
+const server = http.createServer(app);
+const port = 3000;
+
+server.listen(3000, () => {
+  console.log(`Server running on port ${port}`);
 });

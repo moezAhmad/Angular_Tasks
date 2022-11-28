@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import * as crypto from "crypto";
 import bcrypt from "bcrypt";
 
-interface StudentDocument extends mongoose.Document {
+interface AdminDocument extends mongoose.Document {
   name: string;
   email: string;
   password: string;
@@ -20,8 +20,9 @@ interface StudentDocument extends mongoose.Document {
   createSession: () => Promise<string>;
 }
 
-const JWT_SECRET = "thisisaseasda12%&%&%&27g7asd76&^sdkajsdabsdk";
-const StudentSchema = new Schema({
+const JWT_SECRET =
+  "thisasjdljasldn%%712836isaseasda12%&%&%&27g7asd76&^sdkajsdabsdk";
+const AdminSchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -33,12 +34,11 @@ const StudentSchema = new Schema({
     trim: true,
     lowercase: true,
     unique: true,
-
     required: [true, "Email required"],
   },
   password: {
     type: String,
-    required: true,
+    required: [true, "Password required"],
   },
   sessions: [
     {
@@ -56,20 +56,20 @@ const StudentSchema = new Schema({
 
 // *** Instance methods ***
 
-StudentSchema.methods.toJSON = function () {
-  const Student = this;
-  const StudentObject = Student.toObject();
+AdminSchema.methods.toJSON = function () {
+  const admin = this;
+  const adminObject = admin.toObject();
 
   // return the document except the password and sessions (these shouldn't be made available)
-  return _.omit(StudentObject, ["password", "sessions"]);
+  return _.omit(adminObject, ["password", "sessions"]);
 };
 
-StudentSchema.methods.generateAccessAuthToken = function () {
-  const Student = this;
+AdminSchema.methods.generateAccessAuthToken = function () {
+  const admin = this;
   return new Promise((resolve, reject) => {
     // Create the JSON Web Token and return that
     jwt.sign(
-      { _id: Student._id.toHexString() },
+      { _id: admin._id.toHexString() },
       JWT_SECRET,
       { expiresIn: "15m" },
       (err, token) => {
@@ -84,7 +84,7 @@ StudentSchema.methods.generateAccessAuthToken = function () {
   });
 };
 
-StudentSchema.methods.generateRefreshAuthToken = function () {
+AdminSchema.methods.generateRefreshAuthToken = function () {
   // This method simply generates a 64byte hex string - it doesn't save it to the database. saveSessionToDatabase() does that.
   return new Promise((resolve, reject) => {
     crypto.randomBytes(64, (err, buf) => {
@@ -98,13 +98,13 @@ StudentSchema.methods.generateRefreshAuthToken = function () {
   });
 };
 
-StudentSchema.methods.createSession = function () {
-  let student = this;
+AdminSchema.methods.createSession = function () {
+  let admin = this;
 
-  return student
+  return admin
     .generateRefreshAuthToken()
     .then((refreshToken: string) => {
-      return saveSessionToDatabase(student, refreshToken);
+      return saveSessionToDatabase(admin, refreshToken);
     })
     .then((refreshToken: string) => {
       // saved to database successfully
@@ -118,32 +118,32 @@ StudentSchema.methods.createSession = function () {
 
 /* MODEL METHODS (static methods) */
 
-StudentSchema.statics.getJWTSecret = () => {
+AdminSchema.statics.getJWTSecret = () => {
   return JWT_SECRET;
 };
 
-StudentSchema.statics.findByIdAndToken = function (_id, token) {
-  // finds Student by id and token
+AdminSchema.statics.findByIdAndToken = function (_id, token) {
+  // finds admin by id and token
   // used in auth middleware (verifySession)
 
-  const Student = this;
+  const admin = this;
 
-  return Student.findOne({
+  return admin.findOne({
     _id,
     "sessions.token": token,
   });
 };
 
-StudentSchema.statics.findByCredentials = function (email, password) {
-  let Student = this;
+AdminSchema.statics.findByCredentials = function (email, password) {
+  let admin = this;
 
-  return Student.findOne({ email }).then((student: any) => {
-    if (!student) return Promise.reject();
+  return admin.findOne({ email }).then((admin: any) => {
+    if (!admin) return Promise.reject();
 
     return new Promise((resolve, reject) => {
-      bcrypt.compare(password, student.password, (err, res) => {
+      bcrypt.compare(password, admin.password, (err, res) => {
         if (res) {
-          resolve(student);
+          resolve(admin);
         } else {
           reject();
         }
@@ -152,7 +152,7 @@ StudentSchema.statics.findByCredentials = function (email, password) {
   });
 };
 
-StudentSchema.statics.hasRefreshTokenExpired = (expiresAt) => {
+AdminSchema.statics.hasRefreshTokenExpired = (expiresAt) => {
   let secondsSinceEpoch = Date.now() / 1000;
   if (expiresAt > secondsSinceEpoch) {
     // hasn't expired
@@ -165,17 +165,17 @@ StudentSchema.statics.hasRefreshTokenExpired = (expiresAt) => {
 
 /* MIDDLEWARE */
 // Before a user document is saved, this code runs
-StudentSchema.pre("save", function (next) {
-  let student = this;
+AdminSchema.pre("save", function (next) {
+  let admin = this;
   let costFactor = 10;
 
-  if (student.isModified("password")) {
+  if (admin.isModified("password")) {
     // if the password field has been edited/changed then run this code.
 
     // Generate salt and hash password
     bcrypt.genSalt(costFactor, (err, salt) => {
-      bcrypt.hash(student.password, salt, (err, hash) => {
-        student.password = hash;
+      bcrypt.hash(admin.password, salt, (err, hash) => {
+        admin.password = hash;
         next();
       });
     });
@@ -185,14 +185,14 @@ StudentSchema.pre("save", function (next) {
 });
 
 /* HELPER METHODS */
-let saveSessionToDatabase = (student: any, refreshToken: any) => {
+let saveSessionToDatabase = (admin: any, refreshToken: any) => {
   // Save session to database
   return new Promise((resolve, reject) => {
     let expiresAt = generateRefreshTokenExpiryTime();
 
-    student.sessions.push({ token: refreshToken, expiresAt });
+    admin.sessions.push({ token: refreshToken, expiresAt });
 
-    student
+    admin
       .save()
       .then(() => {
         // saved session successfully
@@ -210,4 +210,4 @@ let generateRefreshTokenExpiryTime = () => {
   return Date.now() / 1000 + secondsUntilExpire;
 };
 
-export const Student = model<StudentDocument>("Student", StudentSchema);
+export const Admin = model<AdminDocument>("Admin", AdminSchema);
