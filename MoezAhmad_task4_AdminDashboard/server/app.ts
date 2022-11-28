@@ -13,32 +13,90 @@ app.use(bodyParser.json());
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
-
 /*
- * GET /lists
- * Purpose: Get all lists
+ * GET /students
+ * Purpose: Get all students
  */
-app.get("/lists", async (req, res) => {
-  List.find().then((lists) => {
-    res.send(lists);
+app.get("/students", (req, res) => {
+  // We want to return an array of all students
+  // in the database
+  Student.find().then((students) => {
+    res.send(students);
   });
 });
 
 /*
- * POST /lists
- * Purpose: Create a list
+ * PATCH /students/:id
+ * Purpose: Update a student
  */
-app.post("/lists", (req, res) => {
-  // We will create a student here
+app.patch("/students/:id", (req, res) => {
+  // We want to update the specified student with the new values specified in the JSON body of the
+  // request
+  Student.findOneAndUpdate(
+    { _id: req.params.id },
+    {
+      $set: req.body,
+    }
+  )
+    .then(() => {
+      res.sendStatus(200);
+    })
+    .catch((e) => {
+      console.log(e);
+      res.sendStatus(400);
+    });
+});
+/*
+ * DELETE /students/:id
+ * Purpose: Update a student
+ */
+app.delete("/students/:id", (req, res) => {
+  // We want to delete the specified student
+  Student.findOneAndDelete({ _id: req.params.id })
+    .then((deletedStudentDocument) => {
+      res.send(deletedStudentDocument);
+    })
+    .catch((e) => {
+      console.log(e);
+      res.sendStatus(400);
+    });
+});
+
+/*
+ * GET /students/:studentId/lists
+ * Purpose: Get all lists of a student
+ */
+app.get("/students/:studentId/lists", async (req, res) => {
+  // We want to return all lists that belong to a specified student
+  List.find({
+    _studentId: req.params.studentId,
+  })
+    .then((lists) => {
+      res.send(lists);
+    })
+    .catch((e) => {
+      console.log(e);
+      res.sendStatus(400);
+    });
+});
+
+/*
+ * POST /students/:studentId/lists
+ * Purpose: Create a list for a student
+ */
+app.post("/students/:studentId/lists", (req, res) => {
+  // We want to create a new list and return the new list document back to the user (which includes the id)
+  // The list information (fields) will be passed in via the JSON request body
   let { title } = req.body;
-  console.log({ title });
+
   let newList = new List({
     title,
+    _studentId: req.params.studentId,
   });
   newList
     .save()
     .then((listDoc) => {
-      // the full list document is returned (incl. id)
+      // full list document
       res.send(listDoc);
     })
     .catch((e) => {
@@ -48,12 +106,15 @@ app.post("/lists", (req, res) => {
 });
 
 /*
- * PATCH /lists:id
+ * PATCH /students/:studentId/lists/:id
  * Purpose: Update a list
  */
-app.patch("/lists/:id", (req, res) => {
+app.patch("/students/:studentId/lists/:id", (req, res) => {
   List.findOneAndUpdate(
-    { _id: req.params.id },
+    {
+      _id: req.params.id,
+      _studentId: req.params.studentId,
+    },
     {
       $set: req.body,
     }
@@ -68,13 +129,16 @@ app.patch("/lists/:id", (req, res) => {
 });
 
 /*
- * DELETE /lists:id
+ * DELETE /students/:studentId/lists/:id
  * Purpose: Delete a student
  */
-app.delete("/lists/:id", (req, res) => {
-  List.findOneAndDelete({ _id: req.params.id })
-    .then((deletedListDoc) => {
-      res.send(deletedListDoc);
+app.delete("/students/:studentId/lists/:id", (req, res) => {
+  List.findOneAndDelete({
+    _id: req.params.id,
+    _studentId: req.params.studentId,
+  })
+    .then((deletedListDocument) => {
+      res.send(deletedListDocument);
     })
     .catch((e) => {
       console.log(e);

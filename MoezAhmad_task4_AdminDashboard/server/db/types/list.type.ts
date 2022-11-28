@@ -7,5 +7,9 @@ const ListSchema = new Schema({
     minlength: 4,
     trim: true,
   },
+  _studentId: {
+    type: Types.ObjectId,
+    required: true,
+  },
 });
 export const List = model("List", ListSchema);
