@@ -71,13 +71,13 @@ StudentSchema.methods.generateAccessAuthToken = function () {
     jwt.sign(
       { _id: Student._id.toHexString() },
       JWT_SECRET,
-      { expiresIn: "15m" },
+      { expiresIn: "20m" },
       (err, token) => {
         if (!err) {
           resolve(token);
         } else {
           // there is an error
-          reject();
+          reject({ error: "Could not generate access token" });
         }
       }
     );
@@ -112,7 +112,9 @@ StudentSchema.methods.createSession = function () {
       return refreshToken;
     })
     .catch((e: string) => {
-      return Promise.reject("Failed to save session to database.\n" + e);
+      return Promise.reject({
+        error: "Failed to save session to database.\n" + e,
+      });
     });
 };
 
@@ -136,16 +138,15 @@ StudentSchema.statics.findByIdAndToken = function (_id, token) {
 
 StudentSchema.statics.findByCredentials = function (email, password) {
   let Student = this;
-
   return Student.findOne({ email }).then((student: any) => {
-    if (!student) return Promise.reject();
+    if (!student) return Promise.reject({ error: "Could not find student" });
 
     return new Promise((resolve, reject) => {
       bcrypt.compare(password, student.password, (err, res) => {
         if (res) {
           resolve(student);
         } else {
-          reject();
+          reject({ error: "Password Donot match" });
         }
       });
     });

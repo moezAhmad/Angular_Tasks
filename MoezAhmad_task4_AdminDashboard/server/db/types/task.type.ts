@@ -11,5 +11,9 @@ const TaskSchema = new Schema({
     type: Types.ObjectId,
     required: true,
   },
+  _studentId: {
+    type: Types.ObjectId,
+    required: true,
+  },
 });
 export const Task = model("Task", TaskSchema);

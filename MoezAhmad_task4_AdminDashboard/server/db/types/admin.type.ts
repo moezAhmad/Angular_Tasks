@@ -18,6 +18,7 @@ interface AdminDocument extends mongoose.Document {
   generateAccessAuthToken: () => Promise<string>;
   generateRefreshAuthToken: () => Promise<string>;
   createSession: () => Promise<string>;
+  hasRefreshTokenExpired: (expiresAt: number) => boolean;
 }
 
 const JWT_SECRET =
@@ -77,7 +78,7 @@ AdminSchema.methods.generateAccessAuthToken = function () {
           resolve(token);
         } else {
           // there is an error
-          reject();
+          reject("Failed to generate access token");
         }
       }
     );
@@ -127,7 +128,6 @@ AdminSchema.statics.findByIdAndToken = function (_id, token) {
   // used in auth middleware (verifySession)
 
   const admin = this;
-
   return admin.findOne({
     _id,
     "sessions.token": token,
@@ -138,14 +138,14 @@ AdminSchema.statics.findByCredentials = function (email, password) {
   let admin = this;
 
   return admin.findOne({ email }).then((admin: any) => {
-    if (!admin) return Promise.reject();
+    if (!admin) return Promise.reject("Admin not found");
 
     return new Promise((resolve, reject) => {
       bcrypt.compare(password, admin.password, (err, res) => {
         if (res) {
           resolve(admin);
         } else {
-          reject();
+          reject("Incorrect password");
         }
       });
     });
