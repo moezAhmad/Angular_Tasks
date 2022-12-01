@@ -3,6 +3,7 @@ import { Student, List, Task, Admin } from "./db/types";
 import bodyParser from "body-parser";
 import { mongoose } from "./db/config/mongoose";
 import http from "http";
+import jwt from "jsonwebtoken";
 
 const app = express();
 mongoose;
@@ -21,12 +22,49 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization"
   );
+  res.header("Access-Control-Allow-Origin", "always");
   if (req.method === "OPTIONS") {
     res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
     return res.status(200).json({});
   }
+
+  res.header(
+    "Access-Control-Expose-Headers",
+    "x-access-token, x-refresh-token"
+  );
   next();
 });
+
+let authenticateAdmin = (req: any, res: any, next: any) => {
+  let token = req.header("x-accces-token");
+  // verify the JWT
+  // @ts-ignore
+  jwt.verify(token, Admin.getJWTSecret(), (err: any, decoded: any) => {
+    if (err) {
+      // there was an error
+      // jwt is invalid - * DO NOT AUTHENTICATE *
+      res.status(401).send(err);
+    } else {
+      req.admin_id = decoded._id;
+      next();
+    }
+  });
+};
+let authenticateStudent = (req: any, res: any, next: any) => {
+  let token = req.header("x-accces-token");
+  // verify the JWT
+  // @ts-ignore
+  jwt.verify(token, Student.getJWTSecret(), (err: any, decoded: any) => {
+    if (err) {
+      // there was an error
+      // jwt is invalid - * DO NOT AUTHENTICATE *
+      res.status(401).send(err);
+    } else {
+      req.student_id = decoded._id;
+      next();
+    }
+  });
+};
 
 // Verify Refresh Token Middleware (which will be added to the GET /students/me/access-token route)
 const verifySessionStudent = (req: any, res: any, next: any) => {
@@ -144,9 +182,10 @@ app.get("/", (req, res) => {
  * GET /students
  * Purpose: Get all students
  */
-app.get("/students", (req, res) => {
+app.get("/students", authenticateAdmin, (req, res) => {
   // We want to return an array of all students
   // in the database
+  console.log("GET /students");
   Student.find().then((students) => {
     res.send(students);
   });
@@ -156,9 +195,10 @@ app.get("/students", (req, res) => {
  * PATCH /students/:id
  * Purpose: Update a student
  */
-app.patch("/students/:id", (req, res) => {
+app.patch("/students/:id", authenticateAdmin, (req, res) => {
   // We want to update the specified student with the new values specified in the JSON body of the
   // request
+  console.log({ ...req.body });
   Student.findOneAndUpdate(
     { _id: req.params.id },
     {
@@ -176,7 +216,7 @@ app.patch("/students/:id", (req, res) => {
  * DELETE /students/:id
  * Purpose: Delete a student
  */
-app.delete("/students/:id", (req, res) => {
+app.delete("/students/:id", authenticateAdmin, (req, res) => {
   // We want to delete the specified student
   Student.findOneAndDelete({ _id: req.params.id })
     .then((deletedStudentDocument) => {
@@ -467,6 +507,7 @@ app.post("/admins", async (req, res) => {
 app.post("/admins/login", (req, res) => {
   // our login logic goes here
   let { email, password } = req.body;
+  console.log({ email, password });
   // @ts-ignore
   Admin.findByCredentials(email, password)
     .then((admin: any) => {

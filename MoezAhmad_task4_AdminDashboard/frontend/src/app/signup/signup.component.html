@@ -1,0 +1,44 @@
+<mat-form-field class="example-full-width">
+  <input
+    name="name"
+    matInput
+    placeholder="Name"
+    type="text"
+    [(ngModel)]="admin.name"
+  />
+</mat-form-field>
+<mat-form-field class="example-full-width">
+  <input
+    name="email"
+    matInput
+    placeholder="Email address"
+    type="email"
+    [(ngModel)]="admin.email"
+  />
+</mat-form-field>
+<mat-form-field class="example-full-width">
+  <input
+    name="password"
+    matInput
+    placeholder="Password"
+    type="password"
+    [(ngModel)]="admin.password"
+  />
+</mat-form-field>
+<mat-form-field class="example-full-width">
+  <input
+    name="confitm-password"
+    matInput
+    placeholder="Confirm Password"
+    type="password"
+    [(ngModel)]="confirmPassword"
+  />
+</mat-form-field>
+<button
+  mat-raised-button
+  type="submit"
+  class="btn btn-danger pull-right"
+  (click)="signUp()"
+>
+  Sign Up
+</button>

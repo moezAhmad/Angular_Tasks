@@ -11,7 +11,6 @@ import { MatRippleModule } from "@angular/material/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatSelectModule } from "@angular/material/select";
-import { IconsComponent } from "app/icons/icons.component";
 import { DashboardComponent } from "app/dashboard/dashboard.component";
 
 @NgModule({
@@ -27,11 +26,6 @@ import { DashboardComponent } from "app/dashboard/dashboard.component";
     MatSelectModule,
     MatTooltipModule,
   ],
-  declarations: [
-    UserProfileComponent,
-    DashboardComponent,
-    TypographyComponent,
-    IconsComponent,
-  ],
+  declarations: [UserProfileComponent, DashboardComponent, TypographyComponent],
 })
 export class AdminLayoutModule {}

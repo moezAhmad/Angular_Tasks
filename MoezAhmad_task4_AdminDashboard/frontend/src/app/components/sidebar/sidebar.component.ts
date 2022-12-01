@@ -14,7 +14,7 @@ export const ROUTES: RouteInfo[] = [
     icon: "dashboard",
     class: "",
   },
-  { path: "/user-profile", title: "User Profile", icon: "person", class: "" },
+  // { path: "/user-profile", title: "User Profile", icon: "person", class: "" },
 
   {
     path: "/typography",
@@ -22,7 +22,6 @@ export const ROUTES: RouteInfo[] = [
     icon: "library_books",
     class: "",
   },
-  { path: "/icons", title: "Icons", icon: "bubble_chart", class: "" },
 ];
 
 @Component({

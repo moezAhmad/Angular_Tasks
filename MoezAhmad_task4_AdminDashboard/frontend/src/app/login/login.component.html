@@ -1,0 +1,26 @@
+<mat-form-field class="example-full-width">
+  <input
+    name="email"
+    matInput
+    placeholder="Email address"
+    type="email"
+    #emailInput
+  />
+</mat-form-field>
+<mat-form-field class="example-full-width">
+  <input
+    name="password"
+    matInput
+    placeholder="Password"
+    type="password"
+    #passwordInput
+  />
+</mat-form-field>
+<button
+  mat-raised-button
+  type="submit"
+  class="btn btn-danger pull-right"
+  (click)="loginButtonPressed(emailInput.value, passwordInput.value)"
+>
+  Login
+</button>
