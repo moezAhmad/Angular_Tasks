@@ -12,7 +12,6 @@ export class HTTPRequestsService {
     this.http.get(`${this.BASE_URL}${uri}`);
 
   readonly loginAdmin = (email: string, password: string) => {
-    console.log(`${this.BASE_URL}/admins/login`);
     return this.http.post(
       `${this.BASE_URL}/admins/login`,
       { email, password },

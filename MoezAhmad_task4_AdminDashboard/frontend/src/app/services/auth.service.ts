@@ -1,7 +1,7 @@
 import { HttpClient, HttpResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
-import { HTTPRequestsService } from "./services/http-requests.service";
+import { HTTPRequestsService } from "./http-requests.service";
 import { shareReplay, tap } from "rxjs/operators";
 
 @Injectable({
@@ -23,7 +23,6 @@ export class AuthService {
           res.headers.get("x-access-token"),
           res.headers.get("x-refresh-token")
         );
-        console.log("Logged in successfully");
       })
     );
   };
@@ -35,6 +34,10 @@ export class AuthService {
     return localStorage.getItem("x-refresh-token");
   };
 
+  readonly getUserId = () => {
+    return localStorage.getItem("_id");
+  };
+
   setAccessToken = (accessToken: string) => {
     localStorage.setItem("x-access-token", accessToken);
   };
@@ -44,13 +47,13 @@ export class AuthService {
     accessToken: string,
     refreshToken: string
   ) => {
-    localStorage.setItem("userId", userId);
+    localStorage.setItem("_id", userId);
     localStorage.setItem("x-access-token", accessToken);
     localStorage.setItem("x-refresh-token", refreshToken);
   };
 
   private removeSession = () => {
-    localStorage.removeItem("userId");
+    localStorage.removeItem("_id");
     localStorage.removeItem("x-access-token");
     localStorage.removeItem("x-refresh-token");
   };
@@ -58,5 +61,21 @@ export class AuthService {
   readonly logout = () => {
     this.removeSession();
     this.router.navigate(["/login"]);
+  };
+
+  readonly getNewAccessToken = () => {
+    return this.http
+      .get(`${this.httpReqService.BASE_URL}/admins/me/access-token`, {
+        headers: {
+          "x-refresh-token": this.getRefreshToken(),
+          _id: this.getUserId(),
+        },
+        observe: "response",
+      })
+      .pipe(
+        tap((res: HttpResponse<any>) => {
+          this.setAccessToken(res.headers.get("x-access-token"));
+        })
+      );
   };
 }

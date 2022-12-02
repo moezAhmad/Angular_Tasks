@@ -14,7 +14,7 @@ import { MatRippleModule } from "@angular/material/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
-import { WebReqInterceptor } from "./web-req.interceptor";
+import { WebReqInterceptor } from "./services/web-req.interceptor";
 
 @NgModule({
   imports: [

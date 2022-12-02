@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import { mongoose } from "./db/config/mongoose";
 import http from "http";
 import jwt from "jsonwebtoken";
-
+const cors = require("cors");
 const app = express();
 mongoose;
 
@@ -15,28 +15,15 @@ mongoose;
 // Load middleware
 app.use(bodyParser.json());
 
-// CORS HEADERS MIDDLEWARE
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization"
-  );
-  res.header("Access-Control-Allow-Origin", "always");
-  if (req.method === "OPTIONS") {
-    res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
-    return res.status(200).json({});
-  }
-
-  res.header(
-    "Access-Control-Expose-Headers",
-    "x-access-token, x-refresh-token"
-  );
-  next();
-});
+app.use(
+  cors({
+    credentials: true,
+    exposedHeaders: ["x-access-token", "x-refresh-token", "_id"],
+  })
+);
 
 let authenticateAdmin = (req: any, res: any, next: any) => {
-  let token = req.header("x-accces-token");
+  let token = req.headers["x-access-token"];
   // verify the JWT
   // @ts-ignore
   jwt.verify(token, Admin.getJWTSecret(), (err: any, decoded: any) => {
@@ -51,7 +38,7 @@ let authenticateAdmin = (req: any, res: any, next: any) => {
   });
 };
 let authenticateStudent = (req: any, res: any, next: any) => {
-  let token = req.header("x-accces-token");
+  let token = req.headers["x-access-token"];
   // verify the JWT
   // @ts-ignore
   jwt.verify(token, Student.getJWTSecret(), (err: any, decoded: any) => {
@@ -69,10 +56,10 @@ let authenticateStudent = (req: any, res: any, next: any) => {
 // Verify Refresh Token Middleware (which will be added to the GET /students/me/access-token route)
 const verifySessionStudent = (req: any, res: any, next: any) => {
   // grab the refresh token from the request header
-  let refreshToken = req.header("x-refresh-token");
+  let refreshToken = req.headers["x-access-token"];
   // grab the _id from the request header
 
-  let _id = req.header("_id");
+  let _id = req.headers["_id"];
   // @ts-ignore
   Student.findByIdAndToken(_id, refreshToken)
     .then((student: any) => {
@@ -121,10 +108,10 @@ const verifySessionStudent = (req: any, res: any, next: any) => {
 // Verify Refresh Token Middleware (which will be added to the GET /admiins/me/access-token route)
 const verifySessionAdmin = (req: any, res: any, next: any) => {
   // grab the refresh token from the request header
-  let refreshToken = req.header("x-refresh-token");
+  let refreshToken = req.headers["x-access-token"];
   // grab the _id from the request header
 
-  let _id = req.header("_id");
+  let _id = req.headers["_id"];
   // @ts-ignore
   Admin.findByIdAndToken(_id, refreshToken)
     .then((admin: any) => {

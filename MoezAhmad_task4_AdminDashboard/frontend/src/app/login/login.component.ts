@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { AuthService } from "app/auth.service";
+import { AuthService } from "../services/auth.service";
 
 @Component({
   selector: "login",
@@ -12,6 +12,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {}
   readonly loginButtonPressed = (email: string, password: string) => {
     this.authService.login(email, password).subscribe((res) => {
+      console.log("Logged in successfully");
       console.log(res);
     });
   };
