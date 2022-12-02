@@ -9,6 +9,11 @@ import { SignupComponent } from "./signup/signup.component";
 
 const routes: Routes = [
   {
+    path: "",
+    redirectTo: "dashboard",
+    pathMatch: "full",
+  },
+  {
     path: "login",
     component: LoginComponent,
   },
@@ -16,6 +21,7 @@ const routes: Routes = [
     path: "signup",
     component: SignupComponent,
   },
+
   {
     path: "",
     component: AdminLayoutComponent,

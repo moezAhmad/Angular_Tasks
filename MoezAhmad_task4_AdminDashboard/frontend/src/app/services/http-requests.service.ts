@@ -19,6 +19,14 @@ export class HTTPRequestsService {
     );
   };
 
+  readonly signUpStudent = (name: string, email: string, password: string) => {
+    return this.http.post(
+      `${this.BASE_URL}/students`,
+      { name, email, password },
+      { observe: "response" }
+    );
+  };
+
   readonly updateStudent = (uri: string, student: Object) =>
     this.http.patch(`${this.BASE_URL}${uri}`, student, {
       responseType: "text",

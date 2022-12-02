@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { AuthService } from "app/services/auth.service";
 
 @Component({
   selector: "signup",
@@ -8,7 +9,7 @@ import { Component, OnInit } from "@angular/core";
 export class SignupComponent implements OnInit {
   admin = { _id: "", name: "", email: "", password: "" };
   confirmPassword = "";
-  constructor() {}
+  constructor(private authService: AuthService) {}
 
   ngOnInit(): void {}
   readonly signUp = () => {
@@ -37,6 +38,10 @@ export class SignupComponent implements OnInit {
       alert("Passwords do not match");
       return;
     }
-    console.log(this.admin);
+    this.authService
+      .signUp(this.admin.name, this.admin.email, this.admin.password)
+      .subscribe((res) => {
+        console.log(res);
+      });
   };
 }

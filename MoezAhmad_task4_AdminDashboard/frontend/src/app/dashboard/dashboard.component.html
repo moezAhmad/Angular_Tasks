@@ -29,7 +29,13 @@
                         edit
                       </a>
                       <span class="mx-3"></span>
-                      <i class="material-icons text-danger"> delete </i>
+                      <i
+                        class="material-icons text-danger"
+                        style="cursor: pointer"
+                        (click)="delete(student._id)"
+                      >
+                        delete
+                      </i>
                     </td>
                   </tr>
                 </tbody>
