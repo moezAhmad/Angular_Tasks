@@ -17,18 +17,35 @@ export class UserProfileComponent implements OnInit {
     console.log(this.student);
   }
   readonly updateProfile = () => {
-    if (this.student.name.trim() === "" || this.student.email.trim() === "") {
+    if (
+      this.student.name.trim() === "" ||
+      this.student.email.trim() === "" ||
+      this.student.address.trim() === "" ||
+      this.student.phone.trim() === "" ||
+      this.student.cnic.trim() === ""
+    ) {
       alert("Please fill all the fields");
+      return;
     } else if (
       !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.student.email)
     ) {
       alert("Please enter a valid email");
+      return;
+    } else if (!/^[0-9]{5}-[0-9]{7}-[0-9]$/.test(this.student.cnic)) {
+      alert("Please enter a valid CNIC (xxxxx-xxxxxxx-x)");
+      return;
+    } else if (!/^[0-9]{11}$/.test(this.student.phone)) {
+      alert("Please enter a valid phone number (xxxxxxxxxxx)");
+      return;
     }
-    this.studentService
-      .updateStudent(this.student._id, this.student)
-      .subscribe((response) => {
+    this.studentService.updateStudent(this.student._id, this.student).subscribe(
+      (response) => {
         console.log(response);
         alert("Profile updated successfully");
-      });
+      },
+      (error) => {
+        alert("error occured");
+      }
+    );
   };
 }

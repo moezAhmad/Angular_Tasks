@@ -1,4 +1,6 @@
 import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
+import { catchError } from "rxjs";
 import { AuthService } from "../services/auth.service";
 
 @Component({
@@ -7,7 +9,7 @@ import { AuthService } from "../services/auth.service";
   styleUrls: ["./login.component.css"],
 })
 export class LoginComponent implements OnInit {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
   credentials = { email: "", password: "", role: "admin" };
 
   ngOnInit(): void {}
@@ -20,10 +22,16 @@ export class LoginComponent implements OnInit {
     if (role === "student") {
       alert("Yet to make student portal");
     } else {
-      this.authService.login(email, password).subscribe((res) => {
-        console.log("Logged in successfully");
-        console.log(res);
-      });
+      this.authService.login(email, password).subscribe(
+        (res) => {
+          console.log("Logged in successfully");
+          console.log(res);
+          this.router.navigate(["/dashboard"]);
+        },
+        (err: any) => {
+          alert("Invalid email or password");
+        }
+      );
     }
   };
 }

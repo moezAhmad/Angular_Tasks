@@ -33,6 +33,13 @@ export class HTTPRequestsService {
       { observe: "response" }
     );
   };
+  readonly signUpAdmin = (name: string, email: string, password: string) => {
+    return this.http.post(
+      `${this.BASE_URL}/admins`,
+      { name, email, password },
+      { observe: "response" }
+    );
+  };
 
   readonly updateStudent = (uri: string, student: Object) =>
     this.http.patch(`${this.BASE_URL}${uri}`, student, {

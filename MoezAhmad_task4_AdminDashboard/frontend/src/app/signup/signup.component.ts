@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
 import { AuthService } from "app/services/auth.service";
 
 @Component({
@@ -17,7 +18,7 @@ export class SignupComponent implements OnInit {
     cnic: "",
   };
   confirmPassword = "";
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {}
   readonly signUp = () => {
@@ -45,7 +46,26 @@ export class SignupComponent implements OnInit {
     } else if (this.user.password !== this.confirmPassword) {
       alert("Passwords do not match");
       return;
+    } else if (
+      this.user.role === "student" &&
+      !/^[0-9]{5}-[0-9]{7}-[0-9]$/.test(this.user.cnic)
+    ) {
+      alert("Please enter a valid CNIC (xxxxx-xxxxxxx-x)");
+      return;
+    } else if (
+      this.user.role === "student" &&
+      !/^[0-9]{11}$/.test(this.user.phone)
+    ) {
+      alert("Please enter a valid phone number (xxxxxxxxxxx)");
+      return;
+    } else if (
+      this.user.role === "student" &&
+      this.user.address.trim() === ""
+    ) {
+      alert("Address is empty");
+      return;
     }
+
     if (this.user.role === "student") {
       this.authService
         .signUpStudent(
@@ -56,11 +76,27 @@ export class SignupComponent implements OnInit {
           this.user.phone,
           this.user.cnic
         )
-        .subscribe((res) => {
-          console.log(res);
-        });
+        .subscribe(
+          (res) => {
+            console.log(res);
+            this.authService.logout();
+          },
+          (err) => {
+            console.log("User Already Exists");
+          }
+        );
     } else {
-      alert("Yet to make admin route");
+      this.authService
+        .signUpAdmin(this.user.name, this.user.email, this.user.password)
+        .subscribe(
+          (res) => {
+            console.log(res);
+            this.router.navigate(["/dashboard"]);
+          },
+          (err) => {
+            console.log("User Already Exists");
+          }
+        );
     }
   };
 }
