@@ -8,12 +8,22 @@ import { AuthService } from "../services/auth.service";
 })
 export class LoginComponent implements OnInit {
   constructor(private authService: AuthService) {}
+  credentials = { email: "", password: "", role: "admin" };
 
   ngOnInit(): void {}
-  readonly loginButtonPressed = (email: string, password: string) => {
-    this.authService.login(email, password).subscribe((res) => {
-      console.log("Logged in successfully");
-      console.log(res);
-    });
+  readonly loginButtonPressed = () => {
+    const { email, password, role } = this.credentials;
+    if (email.trim() === "" || password.trim() === "") {
+      alert("Please fill all the fields");
+      return;
+    }
+    if (role === "student") {
+      alert("Yet to make student portal");
+    } else {
+      this.authService.login(email, password).subscribe((res) => {
+        console.log("Logged in successfully");
+        console.log(res);
+      });
+    }
   };
 }

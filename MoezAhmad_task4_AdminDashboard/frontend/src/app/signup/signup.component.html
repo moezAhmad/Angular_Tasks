@@ -1,44 +1,89 @@
-<mat-form-field class="example-full-width">
-  <input
-    name="name"
-    matInput
-    placeholder="Name"
-    type="text"
-    [(ngModel)]="admin.name"
-  />
-</mat-form-field>
-<mat-form-field class="example-full-width">
-  <input
-    name="email"
-    matInput
-    placeholder="Email address"
-    type="email"
-    [(ngModel)]="admin.email"
-  />
-</mat-form-field>
-<mat-form-field class="example-full-width">
-  <input
-    name="password"
-    matInput
-    placeholder="Password"
-    type="password"
-    [(ngModel)]="admin.password"
-  />
-</mat-form-field>
-<mat-form-field class="example-full-width">
-  <input
-    name="confitm-password"
-    matInput
-    placeholder="Confirm Password"
-    type="password"
-    [(ngModel)]="confirmPassword"
-  />
-</mat-form-field>
-<button
-  mat-raised-button
-  type="submit"
-  class="btn btn-danger pull-right"
-  (click)="signUp()"
->
-  Sign Up
-</button>
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row d-flex justify-content-center mt-5">
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header card-header-danger">
+            <h4 class="card-title">Sign Up</h4>
+          </div>
+          <div class="card-body">
+            <mat-form-field class="example-full-width">
+              <input
+                name="name"
+                matInput
+                placeholder="Name"
+                type="text"
+                [(ngModel)]="user.name"
+              />
+            </mat-form-field>
+            <mat-form-field class="example-full-width">
+              <input
+                name="email"
+                matInput
+                placeholder="Email address"
+                type="email"
+                [(ngModel)]="user.email"
+              />
+            </mat-form-field>
+            <mat-form-field class="example-full-width">
+              <input
+                name="password"
+                matInput
+                placeholder="Password"
+                type="password"
+                [(ngModel)]="user.password"
+              />
+            </mat-form-field>
+            <mat-form-field class="example-full-width">
+              <input
+                name="confitm-password"
+                matInput
+                placeholder="Confirm Password"
+                type="password"
+                [(ngModel)]="confirmPassword"
+              />
+            </mat-form-field>
+            <button
+              mat-raised-button
+              type="submit"
+              class="btn btn-danger pull-right"
+              (click)="signUp()"
+            >
+              Sign Up
+            </button>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input
+                  class="form-check-input"
+                  name="accountType"
+                  type="radio"
+                  value="admin"
+                  [(ngModel)]="user.role"
+                  checked
+                />
+                Admin
+                <span class="form-check-sign">
+                  <span class="check"></span>
+                </span>
+              </label>
+              <span class="mx-2"></span>
+              <label class="form-check-label">
+                <input
+                  class="form-check-input"
+                  name="accountType"
+                  type="radio"
+                  [(ngModel)]="user.role"
+                  value="student"
+                />
+                Student
+                <span class="form-check-sign">
+                  <span class="check"></span>
+                </span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
