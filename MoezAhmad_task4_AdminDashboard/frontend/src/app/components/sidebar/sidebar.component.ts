@@ -15,13 +15,6 @@ export const ROUTES: RouteInfo[] = [
     class: "",
   },
   // { path: "/user-profile", title: "User Profile", icon: "person", class: "" },
-
-  {
-    path: "/typography",
-    title: "Typography",
-    icon: "library_books",
-    class: "",
-  },
 ];
 
 @Component({

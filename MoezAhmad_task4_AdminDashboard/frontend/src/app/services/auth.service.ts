@@ -26,18 +26,27 @@ export class AuthService {
       })
     );
   };
-  readonly signUp = (name: string, email: string, password: string) => {
-    return this.httpReqService.signUpStudent(name, email, password).pipe(
-      shareReplay(),
-      tap((res: HttpResponse<any>) => {
-        this.setSession(
-          res.body._id,
-          res.headers.get("x-access-token"),
-          res.headers.get("x-refresh-token")
-        );
-        console.log("Signed up successfully");
-      })
-    );
+  readonly signUpStudent = (
+    name: string,
+    email: string,
+    password: string,
+    address: string,
+    phone: string,
+    cnic: string
+  ) => {
+    return this.httpReqService
+      .signUpStudent(name, email, password, address, phone, cnic)
+      .pipe(
+        shareReplay(),
+        tap((res: HttpResponse<any>) => {
+          this.setSession(
+            res.body._id,
+            res.headers.get("x-access-token"),
+            res.headers.get("x-refresh-token")
+          );
+          console.log("Signed up successfully");
+        })
+      );
   };
 
   getAccessToken = () => {

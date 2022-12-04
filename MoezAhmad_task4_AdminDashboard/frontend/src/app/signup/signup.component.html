@@ -36,11 +36,47 @@
             </mat-form-field>
             <mat-form-field class="example-full-width">
               <input
-                name="confitm-password"
+                name="confirm-password"
                 matInput
                 placeholder="Confirm Password"
                 type="password"
                 [(ngModel)]="confirmPassword"
+              />
+            </mat-form-field>
+            <mat-form-field
+              class="example-full-width"
+              *ngIf="user.role === 'student'"
+            >
+              <input
+                name="address"
+                matInput
+                placeholder="Address"
+                type="text"
+                [(ngModel)]="user.address"
+              />
+            </mat-form-field>
+            <mat-form-field
+              class="example-full-width"
+              *ngIf="user.role === 'student'"
+            >
+              <input
+                name="phone"
+                matInput
+                placeholder="Phone Number"
+                type="text"
+                [(ngModel)]="user.phone"
+              />
+            </mat-form-field>
+            <mat-form-field
+              class="example-full-width"
+              *ngIf="user.role === 'student'"
+            >
+              <input
+                name="cnic"
+                matInput
+                placeholder="CNIC"
+                type="text"
+                [(ngModel)]="user.cnic"
               />
             </mat-form-field>
             <button

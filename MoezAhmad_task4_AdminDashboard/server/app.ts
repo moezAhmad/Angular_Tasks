@@ -66,8 +66,7 @@ const verifySessionStudent = (req: any, res: any, next: any) => {
       if (!student) {
         // student couldn't be found
         return Promise.reject({
-          error:
-            "Student not found. Make sure that the refresh token and student id are correct",
+          error: "Student not found",
         });
       }
       // if the code reaches here - the student was found
@@ -102,7 +101,11 @@ const verifySessionStudent = (req: any, res: any, next: any) => {
     })
     .catch((e: any) => {
       console.log(e);
-      res.status(401).send(e);
+      if (e.error === "Student not found") {
+        res.status(403).send(e);
+      } else {
+        res.status(401).send(e);
+      }
     });
 };
 // Verify Refresh Token Middleware (which will be added to the GET /admiins/me/access-token route)
@@ -118,8 +121,7 @@ const verifySessionAdmin = (req: any, res: any, next: any) => {
       if (!admin) {
         // admin couldn't be found
         return Promise.reject({
-          error:
-            "admin not found. Make sure that the refresh token and admin id are correct",
+          error: "admin not found",
         });
       }
       // if the code reaches here - the admin was found
@@ -154,7 +156,11 @@ const verifySessionAdmin = (req: any, res: any, next: any) => {
     })
     .catch((e: any) => {
       console.log(e);
-      res.status(401).send(e);
+      if (e.error === "admin not found") {
+        res.status(403).send(e);
+      } else {
+        res.status(401).send(e);
+      }
     });
 };
 
@@ -384,12 +390,15 @@ app.delete("/students/:studentId/lists/:listId/tasks/:taskId", (req, res) => {
  */
 app.post("/students", async (req, res) => {
   // our register logic goes here...
-  let { name, email, password } = req.body;
-  console.log({ name, email, password });
+  let { name, email, password, address, phone, cnic } = req.body;
+  console.log({ name, email, password, address, phone, cnic });
   let newStudent = new Student({
     name,
     email,
     password,
+    address,
+    phone,
+    cnic,
   });
   newStudent
     .save()

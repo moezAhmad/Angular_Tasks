@@ -19,10 +19,17 @@ export class HTTPRequestsService {
     );
   };
 
-  readonly signUpStudent = (name: string, email: string, password: string) => {
+  readonly signUpStudent = (
+    name: string,
+    email: string,
+    password: string,
+    address: string,
+    phone: string,
+    cnic: string
+  ) => {
     return this.http.post(
       `${this.BASE_URL}/students`,
-      { name, email, password },
+      { name, email, password, address, phone, cnic },
       { observe: "response" }
     );
   };

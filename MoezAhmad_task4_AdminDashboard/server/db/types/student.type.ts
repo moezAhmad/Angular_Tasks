@@ -40,6 +40,18 @@ const StudentSchema = new Schema({
     type: String,
     required: true,
   },
+  address: {
+    type: String,
+    required: true,
+  },
+  phone: {
+    type: String,
+    required: true,
+  },
+  cnic: {
+    type: String,
+    required: true,
+  },
   sessions: [
     {
       token: {

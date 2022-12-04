@@ -7,7 +7,15 @@ import { AuthService } from "app/services/auth.service";
   styleUrls: ["./signup.component.css"],
 })
 export class SignupComponent implements OnInit {
-  user = { name: "", email: "", password: "", role: "admin" };
+  user = {
+    name: "",
+    email: "",
+    password: "",
+    role: "admin",
+    address: "",
+    phone: "",
+    cnic: "",
+  };
   confirmPassword = "";
   constructor(private authService: AuthService) {}
 
@@ -40,7 +48,14 @@ export class SignupComponent implements OnInit {
     }
     if (this.user.role === "student") {
       this.authService
-        .signUp(this.user.name, this.user.email, this.user.password)
+        .signUpStudent(
+          this.user.name,
+          this.user.email,
+          this.user.password,
+          this.user.address,
+          this.user.phone,
+          this.user.cnic
+        )
         .subscribe((res) => {
           console.log(res);
         });

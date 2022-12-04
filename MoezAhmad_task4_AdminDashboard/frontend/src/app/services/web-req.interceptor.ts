@@ -23,7 +23,10 @@ export class WebReqInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
         console.log(error);
-        if (error.status === 401) {
+        if (error.status === 403) {
+          console.log(error);
+          this.authService.logout();
+        } else if (error.status === 401) {
           // We want to call auth service to refresh the access token
           return this.refreshAccessToken().pipe(
             switchMap(() => {

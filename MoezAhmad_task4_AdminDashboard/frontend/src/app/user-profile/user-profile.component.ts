@@ -9,7 +9,7 @@ import { data } from "jquery";
   styleUrls: ["./user-profile.component.css"],
 })
 export class UserProfileComponent implements OnInit {
-  student = { _id: "", name: "", email: "" };
+  student = { _id: "", name: "", email: "", address: "", phone: "", cnic: "" };
   constructor(private studentService: StudentService) {}
 
   ngOnInit() {
